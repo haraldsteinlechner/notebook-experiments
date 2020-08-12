@@ -1,0 +1,70 @@
+#!powershell
+
+$clockExtensionDir = "D:\Development2\interactive\samples\extensions\ClockExtension"
+cd $clockExtensionDir
+Get-ChildItem #| ConvertTo-Json | Out-Display -MimeType "application/json"
+dotnet build
+dotnet pack /p:PackageVersion=1.2.21
+Get-ChildItem -Recurse *.nupkg
+Remove-Item -path "C:\Users\steinlechner\.nuget\packages\clockextension\1.2.21" -recurse 
+
+#!fsharp
+
+#r nuget:FSharp.Data.Adaptive,1.0.0
+
+#r @"D:\Development2\Adaptify\bin\Debug\netstandard2.0\Adaptify.Core.dll"
+#r @"D:\Development2\Adaptify\bin\Debug\netstandard2.0\Adaptify.Compiler.Core.dll"
+#i nuget:D:\Development2\interactive\samples\extensions\ClockExtension\bin\Debug\
+#r nuget:clockextension,1.2.21
+
+#!fsharp
+
+module Bla = 
+    open FSharp.Data.Adaptive
+    open Adaptify
+
+    [<ModelType>]
+    type Model =
+        { 
+            a : int
+            b : int
+            c : float
+            d : string
+        }
+
+    let hans(a : AdaptiveModel) =
+        ()
+
+    let seppy() =
+        let sepp : AdaptiveModel = AdaptiveModel.Create { a = 324; b = 12; c = 2.23; d = "123413" }
+        sepp.d
+
+#!fsharp
+
+open Bla
+open FSharp.Data.Adaptive
+open Adaptify
+
+[<ModelType>]
+type Hans =
+    { 
+        x : Model
+    }
+
+let asdasd = AdaptiveHans.Create { x = { a = 10; b = 5; c = 1.2 } }
+
+let sepp = AdaptiveModel.Create { a = 10; b = 5; c = 1.2 }
+
+
+let a = 10
+
+sepp.a |> AVal.force |> printfn "%A"
+
+transact (fun () -> sepp.Update { a = 5; b = 2; c = 2.2 })
+
+sepp.c |> AVal.force |> printfn "%A"
+
+#!fsharp
+
+let a = 1
+printfn "%A" a
